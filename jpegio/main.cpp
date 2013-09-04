@@ -1,8 +1,11 @@
 #include "jpegio.h"
 #include <iostream>
+#pragma comment(lib, "opencv_imgproc"CV_VERSION_NUMBER".lib")
+
 using namespace std;
 void speedTest(Mat& src, int quality=80, int iteration=10)
 {
+	cout<<"speed test"<<endl;
 	int iter = iteration;
 	int q = quality;
 
@@ -58,11 +61,47 @@ void speedTest(Mat& src, int quality=80, int iteration=10)
 	}
 	time = (getTickCount()-startTime)/(getTickFrequency());
 	cout<<"jpegturbo(slowest,ac):"<<time*1000.0/iter<<"ms"<<endl;
+	
+	cout<<endl;
+}
+void rate_distortionTest(Mat& src)
+{
+	cout<<"RD test"<<endl;
+	for(int q=100;q>30;q-=10)
+	{
+	cout<<"quality: "<<q<<endl;
+	{
+		vector<uchar> buff;
+		vector<int> param(2);
+		param[0]=IMWRITE_JPEG_QUALITY;
+		param[1]=q;
+		imencode(".jpg",src,buff,param);
+		Mat dest = imdecode(buff,1);
+		cout<<"opencv              "<<buff.size()<<"byte, "<<PSNR(src,dest)<<"dB"<<endl;
+	}
+	{
+		vector<uchar> buff;
+		Mat dest;
+		imencodeJPEG(src,buff,q, DCT_FLOAT,false);
+		imdecodeJPEG(buff,dest);
+		cout<<"jpeg turbo(huffman) "<<buff.size()<<"byte, "<<PSNR(src,dest)<<"dB"<<endl;
+		
+	}
+	{
+		vector<uchar> buff;
+		Mat dest;
+		imencodeJPEG(src,buff,q, DCT_FLOAT,true);
+		imdecodeJPEG(buff,dest);
+		cout<<"jpeg turbo(ac)      "<<buff.size()<<"byte, "<<PSNR(src,dest)<<"dB"<<endl;
+	}
+	cout<<endl;
+	}
 }
 int main(int srgc, char** argv)
 {
 	Mat src = imread("kodim23.png");
 	speedTest(src);
+	rate_distortionTest(src);
 	/*
 	Mat dest;
 	

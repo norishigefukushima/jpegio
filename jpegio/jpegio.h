@@ -10,7 +10,6 @@ using namespace cv;
 
 #pragma comment(lib, "opencv_core"CV_VERSION_NUMBER".lib")
 #pragma comment(lib, "opencv_highgui"CV_VERSION_NUMBER".lib")
-
 //typedef enum {
 //	JDCT_ISLOW,		/* slow but accurate integer algorithm */
 //	JDCT_IFAST,		/* faster, less accurate integer method */
