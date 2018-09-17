@@ -2,24 +2,45 @@ jpegio
 ======
 
 This code is a wrapper of libjpeg-turbo (http://www.libjpeg-turbo.org/) for opencv image IO
-The used version of libjpeg-turbo is 1.3.0 for visual studio 2012(64 bit).
+The used version of libjpeg-turbo is 2.0 for visual studio 2015 (64 bit) with AVX.
+The used version of OpenCV is 3.3.1 for visual studio 2015 (64 bit).
 
+If your CPU does not support AVX, please use libjpeg-turbo ver. 1.3 to copy the folder of jpegturbo1.3.
+Default is jpegturbo2.0
 
-Exsample of test results on core i5-2450M 2.5GHz, Windows 7 64 bit with Visual Studio 2012 are as follows;
+Example of test results on core i7-6700K 4.0 GHz, Windows 10 64 bit with Visual Studio 2015 are as follows;
 
+(Result of currect lib (ver. 2.0))
 speed test
 encode:
+opencv:8.97745ms
+jpegturbo(fastest,huffman):1.83012ms
+jpegturbo(slowest,huffman):1.98872ms
+jpegturbo(fastest,ac):9.57734ms
+jpegturbo(slowest,ac):9.60081ms
 
-opencv:10.7853ms
+decode:
+opencv:4.33225ms
+jpegturbo(fastest,huffman):1.70972ms
+jpegturbo(slowest,huffman):1.69874ms
+jpegturbo(fastest,ac):10.337ms
+jpegturbo(slowest,ac):10.2784ms
 
-jpegturbo(fastest,huffman):3.24866ms
+(Result of old lib (ver. 1.3.0))
+speed test
+encode:
+opencv:9.09152ms
+jpegturbo(fastest,huffman):2.4142ms
+jpegturbo(slowest,huffman):2.58792ms
+jpegturbo(fastest,ac):9.86866ms
+jpegturbo(slowest,ac):10.0639ms
 
-jpegturbo(slowest,huffman):3.51242ms
-
-jpegturbo(fastest,ac):9.79507ms
-
-jpegturbo(slowest,ac):10.5221ms
-
+decode:
+opencv:4.33917ms
+jpegturbo(fastest,huffman):1.99275ms
+jpegturbo(slowest,huffman):1.9233ms
+jpegturbo(fastest,ac):10.5472ms
+jpegturbo(slowest,ac):10.4786ms
 
 RD test
 

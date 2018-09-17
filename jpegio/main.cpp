@@ -1,8 +1,14 @@
 #include "jpegio.h"
 #include <iostream>
-#pragma comment(lib, "opencv_imgproc"CV_VERSION_NUMBER".lib")
 
 using namespace std;
+using namespace cv;
+
+#include "opencvmacro.h"
+#pragma CV_LIBRARY(imgproc)
+#pragma CV_LIBRARY(imgcodecs)
+//#pragma CV_LIBRARY(highgui)
+
 void speedTest(Mat& src, int quality=80, int iteration=10)
 {
 	cout<<"speed test"<<endl;
@@ -136,6 +142,7 @@ void speedTest(Mat& src, int quality=80, int iteration=10)
 	cout<<"jpegturbo(slowest,ac):"<<time*1000.0/iter<<"ms"<<endl;
 	cout<<endl;
 }
+
 void rate_distortionTest(Mat& src)
 {
 	cout<<"RD test"<<endl;
@@ -169,11 +176,39 @@ void rate_distortionTest(Mat& src)
 		cout<<endl;
 	}
 }
+
+void looptest(Mat& src)
+{
+	int q = 99;
+	cout << "quality: " << q << endl;
+	vector<uchar> buff;
+	Mat dest;
+	imencodeJPEG(src, buff, q, DCT_FLOAT, false);
+	while(1)
+	{
+		/*
+		//opencv
+		vector<uchar> buff;
+		vector<int> param(2);
+		param[0] = IMWRITE_JPEG_QUALITY;
+		param[1] = q;
+		imencode(".jpg", src, buff, param);
+		Mat dest = imdecode(buff, 1);
+		*/
+		//jpeg
+		
+		imdecodeJPEG(buff, dest);
+		
+	}
+}
+
 int main(int srgc, char** argv)
 {
 	Mat src = imread("kodim23.png");
-	speedTest(src);
-	rate_distortionTest(src);
 	
+	speedTest(src, 90 , 10);
+	rate_distortionTest(src);
+	//looptest(src);
+
 	return 0;
 }
