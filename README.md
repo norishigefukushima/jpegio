@@ -1,12 +1,12 @@
 jpegio
 ======
 
-This code is a wrapper of libjpeg-turbo (http://www.libjpeg-turbo.org/) for opencv image IO
+This code is a wrapper of libjpeg-turbo (http://www.libjpeg-turbo.org/) for opencv image IO.
 The used version of libjpeg-turbo is 2.0 for visual studio 2015 (64 bit) with AVX.
 The used version of OpenCV is 3.3.1 for visual studio 2015 (64 bit).
 
 If your CPU does not support AVX, please use libjpeg-turbo ver. 1.3 to copy the folder of jpegturbo1.3.
-Default is jpegturbo2.0
+Default is jpegturbo2.0.
 
 Example of test results on core i7-6700K 4.0 GHz, Windows 10 64 bit with Visual Studio 2015 are as follows;
 
