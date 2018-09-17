@@ -10,7 +10,7 @@ Default is jpegturbo2.0
 
 Example of test results on core i7-6700K 4.0 GHz, Windows 10 64 bit with Visual Studio 2015 are as follows;
 
-(Result of currect lib (ver. 2.0))
+Result of currect lib (ver. 2.0)
 
 ```
 speed test
@@ -29,7 +29,7 @@ jpegturbo(fastest,ac):10.337ms
 jpegturbo(slowest,ac):10.2784ms
 ```
 
-(Result of old lib (ver. 1.3.0))
+Result of old lib (ver. 1.3.0)
 ```
 speed test
 encode:
