@@ -8,9 +8,14 @@ The used version of OpenCV is 3.3.1 for visual studio 2015 (64 bit).
 If your CPU does not support AVX, please use libjpeg-turbo ver. 1.3 to copy the folder of jpegturbo1.3.
 Default is jpegturbo2.0.
 
-Example of test results on core i7-6700K 4.0 GHz, Windows 10 64 bit with Visual Studio 2015 are as follows;
+Example of test results on core i7-6700K 4.0 GHz, Windows 10 64 bit with Visual Studio 2015 are as follows:
 
 Result of currect lib (ver. 2.0)
+
+* fastest: using fastest DCT (AAN)
+* slowest: using accurate DCT (LLM or native)
+* huffman: using huffman coding for entropy coder
+* ac: using arithmetic coding for entropy coder
 
 ```
 speed test
