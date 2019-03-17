@@ -202,10 +202,83 @@ void looptest(Mat& src)
 	}
 }
 
+void generateJPEGData(Mat& src, int num_frame)
+{
+	double sigma = 10.0;
+	Mat s, d;
+	Mat dest;
+	vector<Mat> vs;
+	vector<Mat> ds(3);
+	src.convertTo(s, CV_32F);
+	Mat n(s.size(), CV_32F);
+	split(s, vs);
+
+	for (int i = 0; i < num_frame; i++)
+	{
+		randn(n, 0, sigma);
+		ds[0] = vs[0] + n;
+		ds[1] = vs[1] + n;
+		ds[2] = vs[2] + n;
+		merge(ds, d);
+		d.convertTo(dest, src.type());
+		cv::imwrite(format("images/%05d.jpg", i), dest);
+	}
+}
+
+void imreadJPEG(string name, Size size, Mat& dest)
+{
+	FILE* fp = fopen(name.c_str(), "rb");
+
+	uchar* buff = new uchar[size.area()*1.5];
+	int bs = fread(buff, sizeof(uchar), size.area()*1.5, fp);
+	imdecodeJPEG(buff, bs, dest);
+	fclose(fp);
+	delete[] buff;
+}
+
+void readJPEGTest()
+{
+	int num_frame = 300;
+	auto startTime = getTickCount();
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat a = cv::imread(format("images/%05d.jpg", i));
+	}
+	cout << "opencv       : " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+	
+	startTime = getTickCount();
+#pragma omp parallel for
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat a = cv::imread(format("images/%05d.jpg", i));
+	}
+	cout << "opencv    omp: " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+	
+	startTime = getTickCount();
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat dest;
+		imreadJPEG(format("images/%05d.jpg", i), Size(3840,2160), dest);
+	}
+	cout << "jpegturbo    : " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+	
+	startTime = getTickCount();
+#pragma omp parallel for
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat dest;
+		imreadJPEG(format("images/%05d.jpg", i), Size(3840, 2160), dest);
+	}
+	cout << "jpegturbo omp: " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+}
+
 int main(int srgc, char** argv)
 {
+	//Mat src = imread("4k.jpg");
+	//generateJPEGData(src, 300); return 0;
+	//readJPEGTest(); return 0;
+
 	Mat src = imread("kodim23.png");
-	
 	speedTest(src, 90 , 10);
 	rate_distortionTest(src);
 	//looptest(src);
