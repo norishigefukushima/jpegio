@@ -272,11 +272,70 @@ void readJPEGTest()
 	cout << "jpegturbo omp: " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
 }
 
+void readJPEGTestOnMemory()
+{
+	int num_frame = 120;
+	vector<uchar*> jpegbuf(num_frame);
+	vector<vector<uchar>> jpegbuf2(num_frame);
+	vector<int> jpegbufsize(num_frame);
+	{
+		Size size = Size(3840, 2160);
+		for (int i = 0; i < num_frame; i++)
+		{
+			string name = format("images/%05d.jpg", i);
+			FILE* fp = fopen(name.c_str(), "rb");
+
+			jpegbuf[i] = new uchar[size.area()*1.5];
+			jpegbufsize[i] = fread(jpegbuf[i], sizeof(uchar), size.area()*1.5, fp);
+			
+			jpegbuf2[i].resize(jpegbufsize[i]);
+			for (int n = 0; n < jpegbufsize[i]; n++)
+			{
+				jpegbuf2[i][n] = jpegbuf[i][n];
+			}
+			fclose(fp);	
+		}
+	}
+	auto startTime = getTickCount();
+	
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat a = imdecode(jpegbuf2[i], cv::IMREAD_ANYCOLOR);
+	}
+	cout << "opencv       : " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+
+	startTime = getTickCount();
+#pragma omp parallel for num_threads(4) schedule (dynamic)
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat a = imdecode(jpegbuf2[i], cv::IMREAD_ANYCOLOR);
+	}
+	cout << "opencv    omp: " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+	
+	startTime = getTickCount();
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat dest;
+		imdecodeJPEG(jpegbuf[i], jpegbufsize[i], dest);
+	}
+	cout << "jpegturbo    : " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+
+	startTime = getTickCount();
+
+#pragma omp parallel for num_threads(4) schedule (dynamic)
+	for (int i = 0; i < num_frame; i++)
+	{
+		Mat dest;
+		imdecodeJPEG(jpegbuf[i], jpegbufsize[i], dest);
+	}
+	cout << "jpegturbo omp: " << (getTickCount() - startTime) / (getTickFrequency()) * 1000.0 / num_frame << "ms" << endl;
+}
 int main(int srgc, char** argv)
 {
 	//Mat src = imread("4k.jpg");
 	//generateJPEGData(src, 300); return 0;
 	//readJPEGTest(); return 0;
+	//readJPEGTestOnMemory(); return 0;
 
 	Mat src = imread("kodim23.png");
 	speedTest(src, 90 , 10);
